@@ -1,23 +1,14 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 const courseSchema = z.object({
@@ -31,18 +22,21 @@ const courseSchema = z.object({
 const CoursesForm = ({ onSubmit, defaultValues }) => {
   const form = useForm({
     resolver: zodResolver(courseSchema),
-    defaultValues: defaultValues || {
-      nombre: "",
-      descripcion: "",
-      fecha_inicio: undefined,
-      fecha_fin: undefined,
-      activo: true,
+    defaultValues: {
+      nombre: defaultValues?.nombre || "",
+      descripcion: defaultValues?.descripcion || "",
+      fecha_inicio: defaultValues?.fecha_inicio
+        ? new Date(defaultValues.fecha_inicio).toISOString().split("T")[0] // Convert to YYYY-MM-DD format
+        : "",
+      fecha_fin: defaultValues?.fecha_fin
+        ? new Date(defaultValues.fecha_fin).toISOString().split("T")[0] // Convert to YYYY-MM-DD format
+        : "",
+      activo: defaultValues?.activo || true,
     },
   });
 
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors },
     watch,
@@ -76,78 +70,32 @@ const CoursesForm = ({ onSubmit, defaultValues }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label className="mb-2">Fecha de Inicio *</Label>
-          <Controller
-            name="fecha_inicio"
-            control={control}
-            render={({ field }) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {field.value ? (
-                      format(field.value, "PPP")
-                    ) : (
-                      <span>Seleccionar fecha</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            )}
+          <input
+            type="date"
+            {...register("fecha_inicio", {
+              setValueAs: (v) => {
+                const date = new Date(v);
+                return isNaN(date) ? undefined : date; // Convert to Date object
+              },
+            })}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.fecha_inicio && (
-            <p className="text-sm text-red-500">
-              {errors.fecha_inicio.message}
-            </p>
+            <p className="text-sm text-red-500">{errors.fecha_inicio.message}</p>
           )}
         </div>
 
         <div>
           <Label className="mb-2">Fecha de Fin *</Label>
-          <Controller
-            name="fecha_fin"
-            control={control}
-            render={({ field }) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {field.value ? (
-                      format(field.value, "PPP")
-                    ) : (
-                      <span>Seleccionar fecha</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            )}
+          <input
+            type="date"
+            {...register("fecha_fin", {
+              setValueAs: (v) => {
+                const date = new Date(v);
+                return isNaN(date) ? undefined : date; // Convert to Date object
+              },
+            })}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.fecha_fin && (
             <p className="text-sm text-red-500">{errors.fecha_fin.message}</p>
