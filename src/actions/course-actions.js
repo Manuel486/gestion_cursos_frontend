@@ -19,7 +19,7 @@ export const getCourseById = async (id) => {
 }
 
 export const createCourse = async (course) => {
-  const { data } = await coursesApi.post("", course);
+  const { data } = await coursesApi.post("/", course);
   return data;
 };
 
