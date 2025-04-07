@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from 'next/navigation'; // Importa el hook de Next.js
+import { useRouter } from 'next/navigation';
 import CoursesForm from "@/components/courses/CoursesForm";
 import { useCourses } from "@/hooks/useCourses";
 
 const NewCoursePage = () => {
   const { createMutation } = useCourses();
-  const router = useRouter(); // Inicializa el router para la navegación
+  const router = useRouter();
 
   const onSubmit = (data) => {
     console.log(data);
