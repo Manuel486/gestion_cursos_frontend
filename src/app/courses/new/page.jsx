@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation'; // Importa el hook de Next.js
-// import CoursesForm from "@/components/courses/CoursesForm";
+import CoursesForm from "@/components/courses/CoursesForm";
 import { useCourses } from "@/hooks/useCourses";
 
 const NewCoursePage = () => {
